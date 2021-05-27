@@ -1,10 +1,20 @@
 import React, { useEffect, useState} from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import PauseIcon from '@material-ui/icons/Pause';
 import { useStopwatch } from 'react-timer-hook';
 import Appbar from './components/Appbar';
-import { Grid } from '@material-ui/core';
+import { Grid, IconButton, Button } from '@material-ui/core';
 import './App.css';
 import userService from './services/userService';
 import moment from 'moment-timezone';
+
+
+const useStyles = makeStyles((theme) => ({
+  button: {
+    margin: theme.spacing(1),
+  },
+}));
 
 // This function is for padding the hour range minutes to 2 digit
   function pad(n, len) {
@@ -17,7 +27,7 @@ import moment from 'moment-timezone';
 
 
 function App() {
-
+  const classes = useStyles();
   
 
   const[hourly_payment, setHourlyPayment] = useState('')
@@ -27,6 +37,8 @@ function App() {
   const[start_time, setStartTime] = useState('')
   const[end_time, setEndTime] = useState('')
   const[hours_tracked, setHoursTracked] = useState('')
+  const[isStart, setIsStart] = useState(true)
+  const[isStop, setIsStop] = useState(false)
 
   
 
@@ -196,10 +208,7 @@ function App() {
     useEffect(() => {
         if (isRunning) {
           intervalID = setInterval(() => {
-            
             console.log('Logs every minute');
-            
-            
             addEntry()
             
           }, 600000);
@@ -218,6 +227,7 @@ function App() {
   return (
     <div className="App">
       <Appbar />
+      <br />
       <Grid container spacing ={1}>
         <Grid item xs={12} sm={12} md ={12}>
           Hello world started 4550
@@ -238,6 +248,47 @@ function App() {
             </div>
             <p>{isRunning ? 'Working'  : 'Not working'  }</p>
             
+            
+            {isStart && 
+              <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              className={classes.button}
+              startIcon={<PlayArrowIcon fontSize="20" />}
+              
+              onClick={() => {
+                start()
+                const local_time = moment().tz(`${timezone_name}`).format('HH:mm a ');
+                setStartTime(local_time)
+                setIsStart(true)
+
+              }}
+            >
+            </Button>
+            }
+            
+
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              className={classes.button}
+              startIcon={<PauseIcon fontSize="20" />}
+              
+              onClick={() => {
+                start()
+                const local_time = moment().tz(`${timezone_name}`).format('HH:mm a ');
+                setStartTime(local_time)
+                setIsStop(true)
+
+              }}
+              
+            >
+              
+            </Button>
+            
+            <span>{days}</span>:<span>{hours}</span>:<span>{minutes}</span>:<span>{seconds}</span>
             <button onClick={() => {
                 start()
                 const local_time = moment().tz(`${timezone_name}`).format('HH:mm a ');
